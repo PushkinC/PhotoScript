@@ -1,7 +1,12 @@
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from tkinter import Label, Tk, Entry
 from openpyxl import load_workbook
-import os
+from window import Window
+from PyQt5.QtWidgets import QApplication
+import os, sys
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
 file_xlsx = load_workbook('book.xlsx')
 
@@ -22,52 +27,15 @@ def save_to_excel(data):
 
 
 
+app = QApplication(sys.argv)
+ex = Window('input', 'output')
+ex.show()
+sys.excepthook = except_hook
+sys.exit(app.exec_())
 
-amount = len(os.listdir('input'))
-cost = '200'
-size = '12'
-nam = '20'
-
-l = []
-for i in os.listdir('output'):
-    l.append(int(i.rstrip('.jpg')))
-
-if len(l) == 0:
-    l = [0]
-
-data = []
-cur_num = max(l)
-for _, filename in enumerate(os.listdir('input')):
-    i = _ + cur_num
-    print(f'Обрабатываю {filename} ({i + 1 - cur_num}/{amount})')
-    im = Image.open(f'input/{filename}')
-    im_size = im.size
-
-
-    # cost = input('Введите цену: ')
-    # size = input('Введите размер: ')
-    # nam = input('Введите ст-ть: ')
-
-    data = [i + 1, cost, nam, size, f'output/{i + 1}.jpg']
-
-    new_im = Image.new('RGB', (im_size[0], im_size[1] + 400), color=(255,255,255))
-    new_im.paste(im)
-    new_size = new_im.size
-
-
-
-    font = ImageFont.truetype('arial.ttf', size=250)
-    text = f'{cost} руб.,  Размер {size},  Арт. {i + 1}'
-
-    draw_im = ImageDraw.Draw(new_im)
-    _,_,w,h = draw_im.textbbox((0, 0), text, font=font)
-
-    draw_im.text(((new_size[0] - w) // 2, new_size[1] - h - 50), text, (0, 0, 0), font=font)
-
-    new_im.save(f'output/{i + 1}.jpg')
-    save_to_excel(data)
 
 file_xlsx.save('book.xlsx')
+file_xlsx.close()
 
 
 
