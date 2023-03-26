@@ -77,6 +77,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def initUI(self):
         self.setWindowTitle('Фото')
         self.counter.setText(f'{self.cur_nam + 1} из {self.amount}')
+        self.load_comboBox()
 
         self.btn_back.clicked.connect(self.cl_back)
         self.btn_next.clicked.connect(self.cl_next)
@@ -90,6 +91,21 @@ class Window(QMainWindow, Ui_MainWindow):
         self.line_cost_buy.setValidator(rx)
 
         self.label.setPixmap(QPixmap(self.pictures[self.cur_nam]['old_path'] + '/' + self.pictures[self.cur_nam]['old_name']).scaled(self.label.width(), self.label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+
+    def load_comboBox(self):
+        with open('comboboxitems/sex.txt', 'rt', encoding="UTF-8") as f:
+            data = []
+            for i in f.readlines():
+                data.append(i.rstrip('\n'))
+        self.sex.clear()
+        self.sex.addItems(data)
+
+        with open('comboboxitems/types of clothes.txt', 'rt', encoding="UTF-8") as f:
+            data = []
+            for i in f.readlines():
+                data.append(i.rstrip('\n'))
+        self.tp.clear()
+        self.tp.addItems(data)
 
     def cl_next(self):
         if self.line_size.text() and self.line_cost_sale.text() and self.line_cost_buy.text():
